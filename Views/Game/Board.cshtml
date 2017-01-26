@@ -1,0 +1,56 @@
+﻿@model TicTacToeMax.WebClient.ViewModels.Game
+@using TicTacToeMax.WebClient.ViewModels;
+<div class="row">
+    <h2>Current Game:</h2>
+    <strong class="text-danger">@Model.Users["1"].Username</strong> (X) vs. <strong class="text-success">@Model.Users["2"].Username</strong> (O), Next turn is: <strong>@Model.CurrentPlayerSymbol</strong>
+</div>
+<!-- TODO: Display board in different colors-->
+<div class="row">
+    <div class="col-lg-7 col-lg-offset-2">
+        <table class="table" id="board">
+            <tbody>
+                @foreach (var boardRow in Model.Board.Keys)
+                {
+                    @foreach (var boardCol in Model.Board[boardRow].Keys)
+                    {
+                        <tr>
+                            @for (int cellRow = 0; cellRow < Model.Board[boardRow][boardCol].Tiles.GetLength(0); cellRow++)
+                            {
+                                @for (int cellCol = 0; cellCol < Model.Board[boardRow][boardCol].Tiles.GetLength(1); cellCol++)
+                                {
+                                    var tile = Model.Board[boardRow][boardCol].Tiles[cellRow, cellCol];
+                                    //tile = string.IsNullOrEmpty(tile) ? "" : tile;
+                                    var clickedCell = new Cell() { GameId = Model._Id, BoardRow = boardRow, BoardCol = boardCol, CellRow = cellRow, CellCol = cellCol };
+                                    string color = "#259B24";
+                                    switch (Model.Board[boardRow][boardCol].GameResult)
+                                    {
+                                        case Board.WonByO:
+                                            color = "##FF8300";
+                                            break;
+                                        case Board.WonByX:
+                                            color = "#1F00BF";
+                                            break;
+                                        case Board.Draw:
+                                            color = "#555";
+                                            break;
+                                    }
+
+                                    <td style="border:none">
+                                        @if (!string.IsNullOrWhiteSpace(tile))
+                                        {
+                                            @Html.ActionLink(tile, "MakeMove", "Game", clickedCell, new { @class = "btn btn-block btn-md", disabled = "disabled", style = "font-weight:bold;font-size:1.5em;border: 1px solid black; background:"+color })
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink(tile, "MakeMove", "Game", clickedCell, new { @class = "btn btn-block btn-md", style = "padding:20px; border: 1px solid black; background-color:"+color })
+                                        }
+                                    </td>
+                                }
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

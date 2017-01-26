@@ -1,0 +1,85 @@
+﻿@model TicTacToeMax.WebClient.Controllers.RegisterViewModel
+
+<script>
+    function checkLoginState() {
+        FB.getLoginStatus(function (response) {
+            if (response.status === 'connected') {
+                // Logged into your app and Facebook.
+                FB.api('/me', function (response) {
+                    console.log('Successful login for: ' + response.name);
+                    console.log("TOKEN:  " + FB.getAuthResponse().accessToken);
+                    document.getElementById("loginFbInput").value = FB.getAuthResponse().accessToken;
+                    document.getElementById("loginFbForm").submit();
+                });
+            }
+        });
+    }
+
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '740038399505884',
+            cookie: true,
+
+            xfbml: true,
+            version: 'v2.8'
+        });
+    };
+
+    // Load the SDK asynchronously
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+</script>
+
+<div class="row">
+    <div class="col-lg-4 col-lg-offset-4">
+        <form class="form-horizontal" method="post" id="loginForm" action="">
+            <h2 class="top">Login/Sing in</h2>
+
+            <div class="form-group">
+                <div class="col-lg-3">
+                    @Html.LabelFor(Model => Model.Email, new { @class = "control-label" })
+                </div>
+                <div class="col-lg-9">
+                    @Html.TextBoxFor(Model => Model.Email, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-3">
+                    @Html.LabelFor(Model => Model.Password, new { @class = "control-label" })
+                </div>
+                <div class="col-lg-9">
+                    @Html.PasswordFor(Model => Model.Password, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-10 ">
+                    <input type="hidden" name="loginTypr" value="" />
+                    <button class="btn btn-lg btn-success btn-block" type="button" onclick="setFormAction('/login')">Log in</button>
+                    <button class="btn btn-lg btn-warning btn-block" type="button" onclick="setFormAction('/register')">Sign in</button>
+                    <fb:login-button scope="public_profile,email" size="xlarge" class="btn-block" onlogin="checkLoginState();">
+                        Login with Facebook
+                    </fb:login-button>
+                </div>
+            </div>
+        </form>
+
+        <form method="post" action="fblogin" id="loginFbForm">
+            @Html.Hidden("fbApiToken", null, new { id = "loginFbInput" })
+        </form>
+
+    </div>
+</div>
+<script>
+    function setFormAction(action) {
+        console.log("Setting action to " + action);
+        var form = document.getElementById('loginForm');
+        form.setAttribute('action', action);
+        form.submit();
+    }
+</script>
